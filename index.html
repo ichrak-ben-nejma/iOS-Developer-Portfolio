@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ichrak Ben Nejma — iOS SwiftUI Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #16161f;
+    --bg4: #1c1c28;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #f0eff8;
+    --text2: #9b99b4;
+    --text3: #5c5a7a;
+    --accent: #7c6aff;
+    --accent2: #a594ff;
+    --accent3: #c8beff;
+    --teal: #00d4aa;
+    --teal2: #00b890;
+    --pink: #ff6b9d;
+    --amber: #ffb547;
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ---- NOISE TEXTURE OVERLAY ---- */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ---- NAV ---- */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.25rem 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  .nav-logo span { color: var(--accent2); }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text2);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--text); }
+
+  .nav-cta {
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 0.5rem 1.25rem;
+    border: 1px solid var(--border2);
+    border-radius: 100px;
+    color: var(--text);
+    text-decoration: none;
+    transition: all 0.2s;
+    background: transparent;
+  }
+
+  .nav-cta:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+
+  /* ---- HERO ---- */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 7rem 3rem 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(124,106,255,0.12) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hero-glow2 {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,212,170,0.07) 0%, transparent 70%);
+    top: 20%;
+    right: 10%;
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    max-width: 900px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 1rem;
+    border: 1px solid rgba(124,106,255,0.3);
+    border-radius: 100px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--accent2);
+    background: rgba(124,106,255,0.08);
+    margin-bottom: 2rem;
+    animation: fadeInUp 0.6s ease both;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    animation: pulse 2s ease infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 0.6s 0.1s ease both;
+  }
+
+  .hero h1 .name { color: var(--accent3); }
+  .hero h1 .role {
+    display: block;
+    font-weight: 400;
+    font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+    color: var(--text2);
+    margin-top: 0.25rem;
+    letter-spacing: -0.01em;
+  }
+
+  .hero-desc {
+    font-size: 1.1rem;
+    color: var(--text2);
+    max-width: 540px;
+    line-height: 1.8;
+    margin-bottom: 2.5rem;
+    animation: fadeInUp 0.6s 0.2s ease both;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 3rem;
+    margin-bottom: 3rem;
+    animation: fadeInUp 0.6s 0.3s ease both;
+  }
+
+  .stat-item { text-align: left; }
+
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .stat-num span { color: var(--accent2); }
+
+  .stat-label {
+    font-size: 0.78rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 0.25rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    animation: fadeInUp 0.6s 0.4s ease both;
+  }
+
+  .btn-primary {
+    padding: 0.875rem 2rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 100px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn-primary:hover {
+    background: var(--accent2);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    padding: 0.875rem 2rem;
+    background: transparent;
+    color: var(--text2);
+    border: 1px solid var(--border2);
+    border-radius: 100px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--accent2);
+    color: var(--accent3);
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ---- TECH STRIP ---- */
+  .tech-strip {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 1.5rem 3rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    overflow: hidden;
+    background: var(--bg2);
+  }
+
+  .tech-strip-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .tech-pills {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .tech-pill {
+    padding: 0.3rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text2);
+    background: var(--bg3);
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+
+  .tech-pill:hover {
+    border-color: var(--accent);
+    color: var(--accent2);
+    background: rgba(124,106,255,0.06);
+  }
+
+  /* ---- SECTIONS ---- */
+  section {
+    padding: 6rem 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-eyebrow::after {
+    content: '';
+    flex: 1;
+    max-width: 40px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.4;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-bottom: 3rem;
+    line-height: 1.1;
+  }
+
+  /* ---- ABOUT ---- */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .about-text p {
+    color: var(--text2);
+    font-size: 1rem;
+    line-height: 1.85;
+    margin-bottom: 1.25rem;
+  }
+
+  .about-text p strong { color: var(--text); font-weight: 500; }
+
+  .about-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .mini-card {
+    padding: 1.25rem 1.5rem;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    transition: border-color 0.2s;
+  }
+
+  .mini-card:hover { border-color: var(--border2); }
+
+  .mini-card-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .mini-card-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+
+  .mini-card-sub {
+    font-size: 0.82rem;
+    color: var(--text3);
+    font-family: var(--font-mono);
+  }
+
+  /* ---- PROJECT ---- */
+  .project-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .project-card:hover { border-color: rgba(124,106,255,0.3); }
+
+  .project-header {
+    padding: 2.5rem 3rem 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .project-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .project-badge {
+    padding: 0.3rem 0.85rem;
+    background: rgba(124,106,255,0.12);
+    border: 1px solid rgba(124,106,255,0.25);
+    border-radius: 100px;
+    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .project-badge.client {
+    background: rgba(0,212,170,0.08);
+    border-color: rgba(0,212,170,0.2);
+    color: var(--teal);
+  }
+
+  .project-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+    line-height: 1.1;
+  }
+
+  .project-subtitle {
+    font-size: 1rem;
+    color: var(--text2);
+    max-width: 600px;
+    line-height: 1.75;
+  }
+
+  .project-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  .project-info {
+    padding: 2.5rem 3rem;
+    border-right: 1px solid var(--border);
+  }
+
+  .project-screenshots {
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .info-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .info-section:last-child { margin-bottom: 0; }
+
+  .info-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 0.75rem;
+  }
+
+  .feature-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .feature-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--text2);
+    line-height: 1.5;
+  }
+
+  .feature-list li::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+    margin-top: 0.45em;
+  }
+
+  .contribution-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .contribution-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.88rem;
+    color: var(--text2);
+    line-height: 1.5;
+  }
+
+  .contribution-list li::before {
+    content: '→';
+    color: var(--teal);
+    flex-shrink: 0;
+    font-size: 0.8rem;
+    margin-top: 0.1em;
+  }
+
+  .stack-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .stack-pill {
+    padding: 0.28rem 0.75rem;
+    background: var(--bg4);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text2);
+  }
+
+  /* ---- SCREENSHOT ZONES ---- */
+  .screenshots-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .screenshot-slot {
+    flex: 1;
+    aspect-ratio: 9/19.5;
+    background: var(--bg4);
+    border: 2px dashed rgba(124,106,255,0.25);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+    max-height: 280px;
+  }
+
+  .screenshot-slot:hover {
+    border-color: var(--accent);
+    background: rgba(124,106,255,0.04);
+  }
+
+  .screenshot-slot input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  .screenshot-slot img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 18px;
+    z-index: 1;
+  }
+
+  .slot-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(124,106,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    color: var(--accent2);
+  }
+
+  .slot-text {
+    font-size: 0.65rem;
+    font-family: var(--font-mono);
+    color: var(--text3);
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .screenshot-slot.has-image .slot-icon,
+  .screenshot-slot.has-image .slot-text {
+    display: none;
+  }
+
+  /* Wide landscape screenshot */
+  .screenshot-slot-wide {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: var(--bg4);
+    border: 2px dashed rgba(124,106,255,0.25);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+    max-height: 160px;
+  }
+
+  .screenshot-slot-wide:hover {
+    border-color: var(--accent);
+    background: rgba(124,106,255,0.04);
+  }
+
+  .screenshot-slot-wide input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  .screenshot-slot-wide img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 14px;
+    z-index: 1;
+  }
+
+  .screenshot-slot-wide.has-image .slot-icon,
+  .screenshot-slot-wide.has-image .slot-text {
+    display: none;
+  }
+
+  /* ---- SKILLS SECTION ---- */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  .skill-card {
+    padding: 1.75rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    transition: all 0.25s;
+  }
+
+  .skill-card:hover {
+    border-color: var(--border2);
+    transform: translateY(-2px);
+  }
+
+  .skill-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .skill-card-icon.purple { background: rgba(124,106,255,0.15); }
+  .skill-card-icon.teal { background: rgba(0,212,170,0.12); }
+  .skill-card-icon.amber { background: rgba(255,181,71,0.12); }
+  .skill-card-icon.pink { background: rgba(255,107,157,0.12); }
+  .skill-card-icon.blue { background: rgba(56,189,248,0.12); }
+  .skill-card-icon.green { background: rgba(74,222,128,0.12); }
+
+  .skill-card-title {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .skill-card-items {
+    font-size: 0.8rem;
+    color: var(--text3);
+    font-family: var(--font-mono);
+    line-height: 1.7;
+  }
+
+  /* ---- CONTACT ---- */
+  .contact-section {
+    text-align: center;
+    padding: 6rem 3rem 8rem;
+    position: relative;
+  }
+
+  .contact-glow {
+    position: absolute;
+    width: 500px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(124,106,255,0.1) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .contact-inner { position: relative; z-index: 1; }
+
+  .contact-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    margin-bottom: 1rem;
+  }
+
+  .contact-subtitle {
+    font-size: 1rem;
+    color: var(--text2);
+    margin-bottom: 2.5rem;
+  }
+
+  .contact-links {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .contact-link {
+    padding: 0.875rem 1.75rem;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    font-size: 0.88rem;
+    color: var(--text2);
+    text-decoration: none;
+    font-family: var(--font-mono);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .contact-link:hover {
+    background: var(--bg4);
+    border-color: var(--accent);
+    color: var(--accent2);
+  }
+
+  /* ---- FOOTER ---- */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg2);
+  }
+
+  .footer-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text3);
+  }
+
+  .footer-copy {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text3);
+  }
+
+  /* ---- SCROLLBAR ---- */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 10px; }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { padding: 6rem 1.5rem 3rem; }
+    .hero-stats { gap: 2rem; }
+    section { padding: 4rem 1.5rem; }
+    .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .project-body { grid-template-columns: 1fr; }
+    .project-info { border-right: none; border-bottom: 1px solid var(--border); }
+    .project-header, .project-info { padding: 1.75rem; }
+    .project-screenshots { padding: 1.75rem; }
+    .skills-grid { grid-template-columns: repeat(2, 1fr); }
+    footer { flex-direction: column; gap: 0.75rem; text-align: center; }
+  }
+
+  @media (max-width: 550px) {
+    .hero h1 { font-size: 2.75rem; }
+    .hero-stats { gap: 1.5rem; }
+    .stat-num { font-size: 2rem; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .screenshots-row { gap: 0.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">I<span>.</span>portfolio</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="ichraqbennejma@gmail.Com" class="nav-cta">Hire me</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="home">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">Available for freelance projects</div>
+    <h1>
+      <span class="name">Ichrak</span>
+      <span class="role">iOS SwiftUI Developer</span>
+    </h1>
+    <p class="hero-desc">
+      I build polished, high-performance iOS applications with SwiftUI — from business analytics dashboards to booking systems, fitness apps, and real-time interactive experiences.
+    </p>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">4<span>+</span></div>
+        <div class="stat-label">Years experience</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">10<span>+</span></div>
+        <div class="stat-label">Apps delivered</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">100<span>%</span></div>
+        <div class="stat-label">SwiftUI native</div>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <a href="#work" class="btn-primary">View my work ↓</a>
+      <a href="#contact" class="btn-secondary">Get in touch</a>
+    </div>
+  </div>
+</div>
+
+<!-- TECH STRIP -->
+<div class="tech-strip">
+  <span class="tech-strip-label">Tech stack</span>
+  <div class="tech-pills">
+    <span class="tech-pill">SwiftUI</span>
+    <span class="tech-pill">Swift</span>
+    <span class="tech-pill">MVVM</span>
+    <span class="tech-pill">Alamofire</span>
+    <span class="tech-pill">Combine</span>
+    <span class="tech-pill">REST APIs</span>
+    <span class="tech-pill">Lottie</span>
+    <span class="tech-pill">Custom Charts</span>
+    <span class="tech-pill">UserDefaults</span>
+    <span class="tech-pill">Xcode</span>
+    <span class="tech-pill">Git</span>
+    <span class="tech-pill">Firebase</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-eyebrow">About me</div>
+  <h2 class="section-title">Crafting native iOS<br>experiences that scale</h2>
+  <div class="about-grid">
+    <div class="about-text">
+      <p>
+        I'm <strong>Ichrak</strong>, an iOS developer with <strong>4+ years of hands-on experience</strong> building production-grade applications using Swift and SwiftUI. My background spans client work across diverse industries — from e-commerce analytics to health & fitness.
+      </p>
+      <p>
+        I work closely with designers and backend teams, translating complex requirements into clean, maintainable code. I follow <strong>MVVM architecture</strong> to ensure apps remain scalable and testable as they grow.
+      </p>
+      <p>
+        Whether it's a custom charting library, a live chat SDK integration, or a pixel-perfect animation — I obsess over the <strong>details that make great apps feel great</strong>.
+      </p>
+    </div>
+    <div class="about-cards">
+      <div class="mini-card">
+        <span class="mini-card-icon">📱</span>
+        <div class="mini-card-title">iOS Native</div>
+        <div class="mini-card-sub">SwiftUI · Swift · UIKit</div>
+      </div>
+      <div class="mini-card">
+        <span class="mini-card-icon">🏗️</span>
+        <div class="mini-card-title">Architecture</div>
+        <div class="mini-card-sub">MVVM · Clean · REST</div>
+      </div>
+      <div class="mini-card">
+        <span class="mini-card-icon">✨</span>
+        <div class="mini-card-title">UI/UX Polish</div>
+        <div class="mini-card-sub">Animations · Lottie · Custom UI</div>
+      </div>
+      <div class="mini-card">
+        <span class="mini-card-icon">🤝</span>
+        <div class="mini-card-title">Client Projects</div>
+        <div class="mini-card-sub">Business · Fitness · Booking</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORK -->
+<section id="work" style="padding-top: 0;">
+  <div class="section-eyebrow">Featured project</div>
+  <h2 class="section-title">Selected work</h2>
+
+  <div class="project-card">
+    <div class="project-header">
+      <div class="project-meta">
+        <span class="project-badge">iOS App</span>
+        <span class="project-badge client">Client Project</span>
+        <span class="project-badge" style="background: rgba(255,181,71,0.08); border-color: rgba(255,181,71,0.2); color: var(--amber);">Business Analytics</span>
+      </div>
+      <div class="project-title">Awisso+</div>
+      <div class="project-subtitle">A powerful iOS application designed for online store owners — providing real-time sales analytics, order management, and live customer support in one unified experience.</div>
+    </div>
+
+    <div class="project-body">
+      <div class="project-info">
+
+        <div class="info-section">
+          <div class="info-label">Key Features</div>
+          <ul class="feature-list">
+            <li>Sales and orders analytics dashboard</li>
+            <li>Accept or cancel customer orders in real-time</li>
+            <li>Interactive charts for statistical insights</li>
+            <li>Custom calendar component for order tracking</li>
+            <li>Live customer support via chat SDK</li>
+            <li>Smooth, modern SwiftUI-based UI with animations</li>
+          </ul>
+        </div>
+
+        <div class="info-section">
+          <div class="info-label">My Contribution</div>
+          <ul class="contribution-list">
+            <li>Built all SwiftUI interfaces from provided designs</li>
+            <li>Integrated backend REST APIs for orders & analytics</li>
+            <li>Designed custom chart components for data visualization</li>
+            <li>Managed app state using MVVM architecture</li>
+            <li>Added Lottie animations for smooth UX</li>
+            <li>Integrated Customerly live chat SDK</li>
+            <li>Performance optimization across the full app</li>
+          </ul>
+        </div>
+
+        <div class="info-section">
+          <div class="info-label">Tech Stack</div>
+          <div class="stack-pills">
+            <span class="stack-pill">SwiftUI</span>
+            <span class="stack-pill">MVVM</span>
+            <span class="stack-pill">Alamofire</span>
+            <span class="stack-pill">UserDefaults</span>
+            <span class="stack-pill">Custom Charts</span>
+            <span class="stack-pill">Custom Calendar</span>
+            <span class="stack-pill">Lottie</span>
+            <span class="stack-pill">Customerly SDK</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="project-screenshots">
+        <div class="info-label" style="margin-bottom: 1rem;">App Screenshots</div>
+
+        <!-- Row 1: 3 portrait phones -->
+        <div class="screenshots-row">
+          <div class="screenshot-slot" id="slot1">
+            <input type="file" accept="image/*" onchange="loadImg(this,'slot1')">
+            <div class="slot-icon">+</div>
+            <div class="slot-text">Dashboard<br>screenshot</div>
+          </div>
+          <div class="screenshot-slot" id="slot2">
+            <input type="file" accept="image/*" onchange="loadImg(this,'slot2')">
+            <div class="slot-icon">+</div>
+            <div class="slot-text">Orders<br>screenshot</div>
+          </div>
+          <div class="screenshot-slot" id="slot3">
+            <input type="file" accept="image/*" onchange="loadImg(this,'slot3')">
+            <div class="slot-icon">+</div>
+            <div class="slot-text">Analytics<br>screenshot</div>
+          </div>
+        </div>
+
+        <!-- Row 2: 2 portrait phones -->
+        <div class="screenshots-row">
+          <div class="screenshot-slot" id="slot4">
+            <input type="file" accept="image/*" onchange="loadImg(this,'slot4')">
+            <div class="slot-icon">+</div>
+            <div class="slot-text">Charts<br>screenshot</div>
+          </div>
+          <div class="screenshot-slot" id="slot5">
+            <input type="file" accept="image/*" onchange="loadImg(this,'slot5')">
+            <div class="slot-icon">+</div>
+            <div class="slot-text">Chat / Calendar<br>screenshot</div>
+          </div>
+          <div class="screenshot-slot" id="slot6">
+            <input type="file" accept="image/*" onchange="loadImg(this,'slot6')">
+            <div class="slot-icon">+</div>
+            <div class="slot-text">Extra<br>screenshot</div>
+          </div>
+        </div>
+
+        <!-- Row 3: wide/landscape screenshot -->
+        <div class="screenshot-slot-wide" id="slot7">
+          <input type="file" accept="image/*" onchange="loadImg(this,'slot7')">
+          <div class="slot-icon">+</div>
+          <div class="slot-text">Landscape / overview screenshot (optional)</div>
+        </div>
+
+        <p style="font-size: 0.7rem; color: var(--text3); font-family: var(--font-mono); text-align: center; margin-top: 0.5rem;">
+          Click any slot to upload your screenshots
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-eyebrow">Skills & expertise</div>
+  <h2 class="section-title">What I bring<br>to your project</h2>
+  <div class="skills-grid">
+    <div class="skill-card">
+      <div class="skill-card-icon purple">📱</div>
+      <div class="skill-card-title">SwiftUI Development</div>
+      <div class="skill-card-items">SwiftUI · Swift · UIKit<br>Custom components · Animations</div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-card-icon teal">🏗️</div>
+      <div class="skill-card-title">Architecture & State</div>
+      <div class="skill-card-items">MVVM · Combine<br>UserDefaults · Core Data</div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-card-icon amber">📡</div>
+      <div class="skill-card-title">Networking</div>
+      <div class="skill-card-items">Alamofire · URLSession<br>REST APIs · JSON parsing</div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-card-icon pink">✨</div>
+      <div class="skill-card-title">UI Polish & Animation</div>
+      <div class="skill-card-items">Lottie · Transitions<br>Custom gesture handlers</div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-card-icon blue">📊</div>
+      <div class="skill-card-title">Data Visualization</div>
+      <div class="skill-card-items">Custom Charts Library<br>Interactive dashboards</div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-card-icon green">🔧</div>
+      <div class="skill-card-title">Tools & Workflow</div>
+      <div class="skill-card-items">Xcode · Git · Figma<br>Firebase · TestFlight</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<div class="contact-section" id="contact">
+  <div class="contact-glow"></div>
+  <div class="contact-inner">
+    <div class="section-eyebrow" style="justify-content: center; margin-bottom: 1rem;">Let's work together</div>
+    <h2 class="contact-title">Have a project<br><span style="color: var(--accent2);">in mind?</span></h2>
+    <p class="contact-subtitle">I'm currently open to freelance iOS projects and full-time opportunities.</p>
+    <div class="contact-links">
+      <a href="mailto:your@email.com" class="contact-link">
+        <span>✉</span> your@email.com
+      </a>
+      <a href="https://github.com/yourusername" target="_blank" class="contact-link">
+        <span>⌥</span> GitHub
+      </a>
+      <a href="https://linkedin.com/in/yourprofile" target="_blank" class="contact-link">
+        <span>◈</span> LinkedIn
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-name">Ichrak · iOS Developer</span>
+  <span class="footer-copy">© 2025 — Built with SwiftUI &amp; passion</span>
+</footer>
+
+<script>
+function loadImg(input, slotId) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const slot = document.getElementById(slotId);
+    let img = slot.querySelector('img');
+    if (!img) {
+      img = document.createElement('img');
+      slot.appendChild(img);
+    }
+    img.src = e.target.result;
+    slot.classList.add('has-image');
+  };
+  reader.readAsDataURL(file);
+}
+</script>
+</body>
+</html>
